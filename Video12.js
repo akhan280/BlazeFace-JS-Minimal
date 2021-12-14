@@ -12,31 +12,32 @@ const setupCamera = () => {
     });
 };
 
-const detect = asnyc () => {
-  const prediction = await model.estimatefaces(video, false);
-  console.log(prediction);
+const detectFaces = async () => {
+  const prediction = await model.estimateFaces(video, false);
+
   ctx.drawImage(video, 0, 0, 600, 400);
   prediction.forEach((pred) => {
-    ctx.begintax();
+    ctx.beginPath();
     ctx.linewidth = "4";
     ctx.strokeStyle = "red";
     ctx.rect(
-      pred.topleft[0],
-      pred.topleft[1],
-      pred.bottomright[0] - pred.topleft[0],
-      pred.bottomright[1] - pred.topleft[1]
-    );
+      pred.topLeft[0],
+      pred.topLeft[1],
+      pred.bottomRight[0] - pred.topLeft[0],
+      pred.bottomRight[1] - pred.topLeft[1]
+  );
   ctx.stroke();
 
   ctx.fillstyle = "red";
   pred.landmarks.forEach((landmark) => {
     ctx.fillRect(landmark[0], landmark[1], 5, 5);
-  }
+  });
   });
 };
 
 setupCamera();
-video.addEventListener("play", asnyc () => {
-  model = blazeface.load();
-  setInterval(detect, 100); 
-}); 
+
+video.addEventListener("play", async () => {
+  model = await blazeface.load();
+  setInterval(detectFaces, 40);
+});
